@@ -2,6 +2,12 @@ public class Encryption {
 
     private static final int DEFAULT_ROTARY_NUM = 13;
 
+    /**
+     * receives the command line arguments and extracts the given values:
+     *  - [mode] [text] (if mode == decrypt the rotaryNum is guessed)
+     *  - [mode] [rotationMode] [text]
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         boolean inEncryptMode = true;
         int rotaryNum = DEFAULT_ROTARY_NUM;
@@ -31,6 +37,12 @@ public class Encryption {
         else System.out.println(decrypt(rotaryNum, text));
     }
 
+    /**
+     * checks which mode is chosen
+     * exits if mode is invalid
+     * @param mode input string; value is checked for 'encrypt' or 'decrypt'
+     * @return true if encrypt mode chosen, false if decrypt mode chosen
+     */
     private static boolean isEncryptMode(String mode) {
         if ("encrypt".equals(mode))
             return true;
@@ -43,6 +55,11 @@ public class Encryption {
         return false;
     }
 
+    /**
+     * extracts the rotary num out of a string of type 'rot[num]'
+     * @param num the string containing the rotary num; should be 'rot[num]'
+     * @return rotary number which is chosen
+     */
     private static int getRotaryNum(String num) {
         if(!num.matches("rot\\d+")) {
             System.err.println("Unknown encryption algorithm: " + num);
@@ -51,14 +68,33 @@ public class Encryption {
         return Integer.parseInt(num.substring(3));
     }
 
+    /**
+     * rotates the plain text by rotaryNum
+     * @param rotaryNum the value to rotate each letter
+     * @param plainText the text where the letters should be rotated
+     * @return the rotated text
+     */
     public static String encrypt(int rotaryNum, String plainText) {
         return rotate(rotaryNum, plainText);
     }
 
+    /**
+     * rotates the encrypted text by -rotaryNum
+     * @param rotaryNum the value to rotate each letter
+     * @param encryptedText the text where the letters should be rotated
+     * @return the rotated text
+     */
     public static String decrypt(int rotaryNum, String encryptedText) {
         return rotate(-rotaryNum, encryptedText);
     }
 
+    /**
+     * adds the rotaryNum (in the range 'A' to 'Z' or 'a' to 'z' if it's uppercase or lowercase) to each letter
+     * in the text and returns the rotated text
+     * @param rotaryNum the value to add to each letter
+     * @param text the text where the rotaryNum should be added
+     * @return a copy of text with the rotated letters
+     */
     private static String rotate(int rotaryNum, String text) {
         char[] chars = text.toCharArray();
         for (int i = 0; i < chars.length; i++) {
@@ -79,6 +115,11 @@ public class Encryption {
         return String.copyValueOf(chars);
     }
 
+    /**
+     * tries to get the rotary num of an encrypted string by looking for the most used chr and interpreting it as an 'e'
+     * @param encryptedText the encrypted text where the rotary num should be guessed
+     * @return the rotary number
+     */
     public static int guessDecryptRotaryNum(String encryptedText) {
         int[] letterCount = new int[26];
         char[] chars = encryptedText.toCharArray();
@@ -104,14 +145,29 @@ public class Encryption {
         return decryptedEPos;
     }
 
+    /**
+     * checks if the char is a lowercase or uppercase letter
+     * @param chr char to check if it's a letter
+     * @return true if chr is a letter
+     */
     private static boolean isLetter(char chr) {
         return isLowercase(chr) || isUppercase(chr);
     }
 
+    /**
+     * checks if the char is an uppercase letter
+     * @param chr char to check if it's uppercase
+     * @return true if chr is uppercase
+     */
     private static boolean isUppercase(char chr) {
         return (chr >= 'A' && chr <= 'Z');
     }
 
+    /**
+     * checks if the char is a lowercase letter
+     * @param chr char to check if it's lowercase
+     * @return true if chr is lowercase
+     */
     private static boolean isLowercase(char chr) {
         return (chr >= 'a' && chr <='z');
     }
